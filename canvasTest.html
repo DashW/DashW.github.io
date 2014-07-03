@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        
+        #background-canvas {
+            position:absolute;
+            z-index: -1;
+        }
+        
+        #test-svg {
+            position:absolute;
+            z-index: 3;
+            width: 240px;
+            height: 240px;
+            left:50%;
+            margin-left: -120px;
+            top:50%;
+            margin-top: -120px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="background-canvas">
+        
+    </canvas>
+    <div id="test-svg">
+        <!--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height:"240">
+            <g>
+                <mask id="topLines">
+                    <rect id="bg" x="0" y="0" width="2000" height="2000" fill="white"></rect>
+                    <rect
+                       width="81.70256"
+                       height="1.7695752"
+                       x="-12.196598"
+                       y="6.4905"
+                       id="rect3159"
+                       style="fill:black;fill-opacity:1;stroke:none"></rect>
+                    <rect
+                       width="66.544411"
+                       height="1.2007831"
+                       x="-6.4098148"
+                       y="10.4183"
+                       id="rect3161"
+                       style="fill:black;fill-opacity:1;stroke:none"></rect>
+                    <rect
+                       width="62.997818"
+                       height="0.75838941"
+                       x="-11.07139"
+                       y="13.9349"
+                       id="rect3161-1"
+                       style="fill:black;fill-opacity:1;stroke:none"></rect>
+                </mask>
+            </g>
+            <g
+             transform="scale(5) translate(0,-4.3622)"
+             id="layer1">
+            <path
+               d="m 0.08930318,4.4493 0,23.9529 0.0296145,0.071 0,12.0119 16.91431632,11.8754 17.101868,0 -33.81382436,-23.6284 -0.15300319,-0.2447 33.93721455,-24.0376 -34.01618474,0 z"
+               id="rect2988"
+               style="fill:#ff2a2a;fill-opacity:1;stroke:none" mask="url(#topLines)"></path>
+            <path
+               d="m 47.959729,4.454 -0.523174,0.4327 -33.325201,23.398 -0.167809,0 0.08389,0.061 -0.08389,0.056 0.162875,0 33.650948,24.0517 0.202361,-0.2164 0,-11.8987 -17.027834,-11.9553 17.027834,0 0,0 -16.86496,0 16.86496,-11.8424 0,-12.0824 z"
+               id="rect2988-9-4"
+               style="fill:#ff2a2a;fill-opacity:1;stroke:none" mask="url(#topLines)"></path>
+            </g>
+        </svg>-->
+    </div>
+</body>
+<script type="text/javascript">
+    var canvas = document.getElementById("background-canvas");
+    
+    var numSteps = 100;
+    var numLines = 5;
+    var delta = 1000/60;
+    var time = 0;
+    
+    var wavelengths = [];
+    
+    for(var x = 0; x < numLines; x++)
+    {
+        wavelengths[x] = 0.5 + (Math.random() * 0.8);
+    }
+    
+    var context = canvas.getContext("2d");
+    
+    var crossAnimTime = 1;
+    
+    function drawLogo(x,y,w,h,t)
+    {
+        context.fillStyle="red";
+        context.fillRect(x+1,y+1,w-2,h-2);
+        
+        context.globalCompositeOperation = "destination-out";
+        
+        /*context.beginPath();
+        context.moveTo(x,y+180);
+        context.lineTo(x+85,y+h);
+        context.lineTo(x,y+h);
+        context.closePath();
+        context.fill();*/
+        
+        while(t> 0.8)
+        {
+            t -= 1.6;
+        }
+        
+        context.translate(-t*350,0);
+        context.moveTo(x+170,y);
+        context.lineTo(x+w,y);
+        context.lineTo(x+70,y+120);
+        context.lineTo(x+w,y+h);
+        context.lineTo(x+170,y+h);
+        context.lineTo(x,y+120);
+        context.closePath();    
+        context.fill();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        
+        /*context.beginPath();
+        context.lineTo(x+w,y+60);
+        context.lineTo(x+w,y+180);
+        context.lineTo(x+155,y+120);
+        context.closePath();
+        
+        context.fillRect(x,y+47,w,4);
+        context.fillRect(x,y+30,w,6);
+        context.fillRect(x,y+11,w,8);*/
+        
+        context.globalCompositeOperation = "xor";
+        /*context.beginPath();
+        context.clip();*/
+    }
+    
+    function animate()
+    {
+        var contentWidth = window.innerWidth;
+        var contentHeight = window.innerHeight - 10;
+        var halfHeight = contentHeight / 2;
+        
+        var numCrossesX = contentWidth / 40;
+        var numCrossesY = contentHeight / 40;
+        
+        canvas.width = contentWidth;
+        canvas.height = contentHeight;
+        
+        time += delta/2000;
+        
+        context.clearRect(0.0,0.0,canvas.width,canvas.height);
+        
+        drawLogo((contentWidth/2) - 120, (contentHeight/2) - 120, 240, 240, time);
+        
+        /*for(j = 0; j < (numCrossesX * numCrossesY); j++)
+        {
+            context.beginPath();
+            
+            var crossX = (40 * Math.floor(j % numCrossesX)) + 20.5;
+            var crossY = (40 * Math.floor(j / numCrossesX)) + 20.5;
+            var crossOrder = Math.floor(j % numCrossesX) + Math.floor(j / numCrossesX);
+            
+            var crossBrightness = 1.0; //1.0 - (Math.cos( crossOrder - (time * 40) ) + 1) * 0.5;
+            
+            var crossTheta = crossOrder - ((time - crossAnimTime) * 40);
+            
+            if(crossTheta > 0 && crossTheta < (Math.PI + Math.PI))
+            {
+                crossBrightness = ((Math.cos(crossTheta) + 1) * 0.5);
+            }
+            
+            context.moveTo( crossX - 4.5, crossY );
+            context.lineTo( crossX + 4.5, crossY );
+            context.moveTo( crossX, crossY - 4.5 );
+            context.lineTo( crossX, crossY + 4.5 );
+            context.strokeStyle = '#cccccc';
+            context.globalAlpha = crossBrightness;
+            context.lineWidth = 1.0;
+            context.stroke();
+        }
+        
+        context.globalAlpha = 1.0;       */ 
+    
+        for(var j = 1; j <= numLines; j++)
+        {
+            context.beginPath();
+            context.moveTo( 0, halfHeight);
+            
+            for(var i = 0; i < numSteps; i++)
+            {
+                var lineHeight = halfHeight + ((Math.sin( ((i / 5) * wavelengths[j-1]) + (time * 3) ) * (contentWidth/100) * (numLines-j)));
+                context.lineTo( i * (contentWidth / numSteps), lineHeight);
+            }
+            
+            context.lineWidth = 2.0;
+            context.strokeStyle='rgb(' + 255 + ',' + Math.floor(255.0*((j/(numLines+1)))) + ',' +  Math.floor(255.0*((j/(numLines+1)))) + ')';
+            context.stroke();
+        }
+    
+    }
+    
+    setInterval(animate,delta);
+    
+</script>
+</html>
